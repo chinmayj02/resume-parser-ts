@@ -1,26 +1,25 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import * as mammoth from 'mammoth';
-import * as fs from 'fs';
 
 export function extractTextFromPDF(file: File) {
     const input: { file: File } = { file: file };
-    pdfjsLib.getDocument(input as any).promise.then(function(pdf){
+    pdfjsLib.getDocument(input as any).promise.then(function (pdf) {
         var numPages = pdf.numPages;
         var text = "";
 
         for (var i = 1; i <= numPages; i++) {
-            pdf.getPage(i).then(function(page) {
-                page.getTextContent().then(function(content) {
-                    content.items.forEach(function(item) {
+            pdf.getPage(i).then(function (page) {
+                page.getTextContent().then(function (content) {
+                    content.items.forEach(function (item) {
                         if ('str' in item) { // Type checking
                             text += item.str + "\n";
                         } else if ('textContent' in item) { // Type checking for TextMarkedContent
                             text += item.textContent + "\n";
                         }
                     });
-                    
-                        console.log(text);
-                    
+
+                    console.log(text);
+
                 });
             });
         }

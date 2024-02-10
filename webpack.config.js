@@ -1,6 +1,4 @@
 const path = require('path');
-const util = require('util');
-
 
 module.exports = {
     entry: './resume-parser.ts',
@@ -9,15 +7,13 @@ module.exports = {
         path: path.resolve(__dirname, 'dist')
     },
     resolve: {
-        extensions: ['.tsx','.ts', '.js']
+        extensions: ['.ts', '.js'],
+        fallback: {
+            path: false,
+            util:false
+        }
     },
     module: {
-        resolve: {
-            fallback: {
-              util: require.resolve('util/'),
-              path: require.resolve('path-browserify'),
-            },
-          },
         rules: [
             {
                 test: /\.ts$/,
@@ -25,17 +21,8 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.tsx$/,
-                use: 'ts-loader',
-                exclude: /node_modules/
-            },
-            {
                 test: /\.html$/,
                 use: 'html-loader'
-            },
-            {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                type: 'asset/resource'
             }
         ]
     },
