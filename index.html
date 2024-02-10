@@ -29,8 +29,10 @@
                 var fileType = getFileType(file.name);
 
                 if (fileType === 'pdf') {
-                    extractTextFromPDF(this.result);
+                    console.log(fileType);
+                    extractTextFromPDF(file);
                 } else if (fileType === 'docx') {
+                    console.log(fileType);
                     extractTextFromDOCX(file);
                 } else {
                     alert("Unsupported file format. Please upload a PDF or DOCX file.");
