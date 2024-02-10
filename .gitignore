@@ -15,7 +15,6 @@ pids
 node_modules
 
 # package file
-package.json
 package-lock.json
 
 # Optional npm cache directory
