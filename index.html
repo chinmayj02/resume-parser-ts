@@ -1,15 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume parsing</title>
 </head>
+
 <body>
     <input type="file" id="fileInput" accept=".pdf,.doc,.docx">
     <div id="output"></div>
-    <script src="dist/bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    
+    <!-- Import pdf.js library -->
     <script>
+        // Specify the source URL for the PDF.js worker script
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
         function getFileType(fileName) {
             var extension = fileName.split('.').pop().toLowerCase();
             if (extension === 'pdf') {
@@ -41,6 +48,50 @@
 
             reader.readAsArrayBuffer(file.slice(0, file.size));
         });
+
+        function extractTextFromPDF(file) {
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                var rawData = new Uint8Array(reader.result); // Get raw data from FileReader
+                pdfjsLib.getDocument({ data: rawData }).promise.then(function (pdf) {
+                    var numPages = pdf.numPages;
+                    var text = "";
+
+                    var promises = [];
+
+                    for (var i = 1; i <= numPages; i++) {
+                        var promise = pdf.getPage(i).then(function (page) {
+                            return page.getTextContent().then(function (content) {
+                                var pageText = "";
+                                content.items.forEach(function (item) {
+                                    if ('str' in item) {
+                                        pageText += item.str + " ";
+                                    } else if ('textContent' in item) {
+                                        pageText += item.textContent + " ";
+                                    }
+                                });
+                                return pageText;
+                            });
+                        });
+                        promises.push(promise);
+                    }
+
+                    // Wait for all promises to resolve
+                    Promise.all(promises).then(function (pageTexts) {
+                        // Concatenate text from all pages
+                        var text = pageTexts.join(" ");
+                        console.log(text);
+                    });
+
+
+
+                });
+            };
+
+            reader.readAsArrayBuffer(file); // Read file as array buffer
+        }
     </script>
 </body>
+
 </html>
