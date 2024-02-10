@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume parsing</title>
+</head>
+<body>
+    <input type="file" id="fileInput" accept=".pdf,.doc,.docx">
+    <div id="output"></div>
+    <script src="dist/bundle.js"></script>
+    <script>
+        function getFileType(fileName) {
+            var extension = fileName.split('.').pop().toLowerCase();
+            if (extension === 'pdf') {
+                return 'pdf';
+            } else if (extension === 'doc' || extension === 'docx') {
+                return 'docx';
+            } else {
+                return 'unsupported';
+            }
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                var fileType = getFileType(file.name);
+
+                if (fileType === 'pdf') {
+                    extractTextFromPDF(this.result);
+                } else if (fileType === 'docx') {
+                    extractTextFromDOCX(file);
+                } else {
+                    alert("Unsupported file format. Please upload a PDF or DOCX file.");
+                }
+            };
+
+            reader.readAsArrayBuffer(file.slice(0, file.size));
+        });
+    </script>
+</body>
+</html>

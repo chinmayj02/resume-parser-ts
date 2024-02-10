@@ -1,0 +1,4 @@
+npm install webpack webpack-cli ts-loader html-loader file-loader --save-dev
+npm install path-browserify
+npm install pdfjs-dist
+npm install mammoth
